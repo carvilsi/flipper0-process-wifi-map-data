@@ -18,6 +18,7 @@ with open(sys.argv[1], "r") as file:
             file_name = working_folder + "/" + data_date[1].replace(":", "_") + "-flpprzr_wfm.csv"
             print("Creating: " + file_name)
             file_tmp = open(file_name, "w")
+            file_tmp.write("AP hash;Distance (meters);AP auth mode;Time from start (seconds)\n")
         else:
             file_tmp.write(line)
 
