@@ -1,3 +1,5 @@
+# This script just draws the APs distance Vs time
+
 import csv
 import sys
 import matplotlib.pyplot as plt
