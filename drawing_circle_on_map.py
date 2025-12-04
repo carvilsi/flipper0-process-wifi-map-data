@@ -35,14 +35,14 @@ def draw_circle(circle_lats, circle_lons, circle_names, fig):
         ),
     ))
 
-df = pd.read_csv("data.csv")
+df = pd.read_csv("geo_data.csv")
 
 fig = px.scatter_map(
         df,
-        lon="Long",
-        lat="Lat",
-        hover_name="Address", 
-        hover_data=["Address", "Listed"],
+        lon="longitude",
+        lat="latitude",
+        hover_name="ap_hash", 
+        hover_data=["ap_hash", "time"],
         zoom=16,
         width=800,
         height=800,
@@ -50,7 +50,7 @@ fig = px.scatter_map(
 
 
 for i in range(0,len(df)):
-    (circle_lats, circle_lons, circle_names) = generate_circle_points(df.Lat[i], df.Long[i], 5, df.Address[i])
+    (circle_lats, circle_lons, circle_names) = generate_circle_points(df.latitude[i], df.longitude[i], 5, df.ap_hash[i])
     draw_circle(circle_lats, circle_lons, circle_names, fig)
 
 fig.update_layout(

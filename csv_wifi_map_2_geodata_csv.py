@@ -9,7 +9,9 @@ import csv
 import sys
 import math
 import pandas as pd
+import plotly.graph_objects as go
 import plotly.express as px
+from math import radians, cos, sin, asin, sqrt, pi
 
 RADIUS_EARTH = 6378.137 * 1000
 
@@ -38,6 +40,36 @@ def calculate_new_coordinates(coord, dist, alpha):
     )
     return (new_lat, new_lon)
 
+def generate_circle_points(lat, lon, radius, name):
+    # parameters
+    N = 360 # number of discrete sample points to be generated along the circle
+    
+    # generate points
+    circle_lats, circle_lons = [], []
+    circle_names = []
+    for k in range(N):
+        # compute
+        angle = pi*2*k/N
+        dx = radius*cos(angle)
+        dy = radius*sin(angle)
+        circle_lats.append(lat + (180/pi)*(dy/6378137))
+        circle_lons.append(lon + (180/pi)*(dx/6378137)/cos(lat*pi/180))
+        circle_names.append(name)
+    circle_lats.append(circle_lats[0])
+    circle_lons.append(circle_lons[0])
+    return (circle_lats, circle_lons, circle_names)
+
+def draw_circle(circle_lats, circle_lons, circle_names, fig):
+    fig.add_trace(go.Scattermap(
+        lat=circle_lats,
+        lon=circle_lons,
+        text=circle_names,
+        mode='lines',
+        marker=go.scattermap.Marker(
+            size=1,
+            color="BlueViolet",
+        ),
+    ))
 
 def main():
     if len(sys.argv) != 4:
@@ -63,6 +95,7 @@ def main():
     for tm in times:
         sub = df.loc[df["Time from start (seconds)"] == tm]
         subsets.append(sub)
+
 
     # get an array holding all the nearest APs
     nearests_uniq = []
@@ -141,12 +174,29 @@ def main():
         lon="longitude",
         hover_name="ap_hash",
         hover_data=["ap_hash", "time"],
-        opacity=1,
         zoom=17,
         height=850,
         width=850,
-        map_style="carto-darkmatter-nolabels",
     )
+
+    for i, ap_draw in gdf.iterrows():
+        print(ap_draw["ap_hash"])
+        print(ap_draw["time"])
+        if i > 0:
+            for j, sub in enumerate(subsets):
+                row = sub.loc[(sub["AP hash"] == ap_draw["ap_hash"]) & (sub["Time from start (seconds)"] == ap_draw["time"])]
+                if not row.empty:
+                    # APs that were on same time
+                    print(subsets[j]["Distance (meters)"])
+                    (circle_lats, circle_lons, circle_names) = generate_circle_points(ap_draw.latitude, ap_draw.longitude, subsets[j]["Distance (meters)"], subsets[j]["AP hash"])
+                    draw_circle(circle_lats, circle_lons, circle_names, fig)
+                fig.update_layout(map_style="carto-darkmatter-nolabels")
+
+            print("== ==")
+                    # print(row)
+                # print(sub.loc[(sub["AP hash"] == ap_draw["ap_hash"]) & (sub["Time from start (seconds)"] == ap_draw["time"])])
+            # print(df.loc[(df["AP hash"] == ap_draw["ap_hash"]) & (df["Time from start (seconds)"] == ap_draw["time"])]["AP hash"])
+
     fig.show()
     print("Process and drawing done, visit your default browser")
 
