@@ -179,23 +179,26 @@ def main():
         width=850,
     )
 
+    # Drawing sorrunding APs
     for i, ap_draw in gdf.iterrows():
-        print(ap_draw["ap_hash"])
-        print(ap_draw["time"])
-        if i > 0:
-            for j, sub in enumerate(subsets):
-                row = sub.loc[(sub["AP hash"] == ap_draw["ap_hash"]) & (sub["Time from start (seconds)"] == ap_draw["time"])]
-                if not row.empty:
-                    # APs that were on same time
-                    print(subsets[j]["Distance (meters)"])
-                    (circle_lats, circle_lons, circle_names) = generate_circle_points(ap_draw.latitude, ap_draw.longitude, subsets[j]["Distance (meters)"], subsets[j]["AP hash"])
-                    draw_circle(circle_lats, circle_lons, circle_names, fig)
-                fig.update_layout(map_style="carto-darkmatter-nolabels")
+        # if i > 0:
+        for j, sub in enumerate(subsets):
+            row = sub.loc[(sub["AP hash"] == ap_draw["ap_hash"]) & (sub["Time from start (seconds)"] == ap_draw["time"])]
+            
+            if not row.empty:
+                print("--- ROW ---")
+                print(row[["AP hash", "Time from start (seconds)"]])
+                print("-----------")
+                print(sub)
+                print("|=0=|")
+                for s, aps in sub.iterrows():
+                # APs that were on same time
 
-            print("== ==")
-                    # print(row)
-                # print(sub.loc[(sub["AP hash"] == ap_draw["ap_hash"]) & (sub["Time from start (seconds)"] == ap_draw["time"])])
-            # print(df.loc[(df["AP hash"] == ap_draw["ap_hash"]) & (df["Time from start (seconds)"] == ap_draw["time"])]["AP hash"])
+                    (circle_lats, circle_lons, circle_names) = generate_circle_points(ap_draw.latitude, ap_draw.longitude, aps["Distance (meters)"], aps["AP hash"])
+                    draw_circle(circle_lats, circle_lons, circle_names, fig)
+    
+    fig.update_layout(map_style="carto-darkmatter-nolabels")
+
 
     fig.show()
     print("Process and drawing done, visit your default browser")
