@@ -12,6 +12,31 @@ import plotly.express as px
 from math import cos, sin, pi
 import argparse
 
+
+# Wi-Fi authmode type
+# from https://github.com/espressif/esp-idf/blob/master/components/esp_wifi/include/esp_wifi_types_generic.h#L85
+WIFI_AUTH_MODE_TYPE = {
+        0:  "WIFI_AUTH_OPEN",                 # Authenticate mode : open 
+        1:  "WIFI_AUTH_WEP",                  # Authenticate mode : WEP 
+        2:  "WIFI_AUTH_WPA_PSK",              # Authenticate mode : WPA_PSK 
+        3:  "WIFI_AUTH_WPA2_PSK",             # Authenticate mode : WPA2_PSK 
+        4:  "WIFI_AUTH_WPA_WPA2_PSK",         # Authenticate mode : WPA_WPA2_PSK 
+        5:  "WIFI_AUTH_ENTERPRISE",           # Authenticate mode : Wi-Fi EAP security", treated the same as WIFI_AUTH_WPA2_ENTERPRISE 
+        6:  "WIFI_AUTH_WPA2_ENTERPRISE",      # Authenticate mode : WPA2-Enterprise security 
+        7:  "WIFI_AUTH_WPA3_PSK",             # Authenticate mode : WPA3_PSK 
+        8:  "WIFI_AUTH_WPA2_WPA3_PSK",        # Authenticate mode : WPA2_WPA3_PSK 
+        9:  "WIFI_AUTH_WAPI_PSK",             # Authenticate mode : WAPI_PSK 
+        10: "WIFI_AUTH_OWE",                  # Authenticate mode : OWE 
+        11: "WIFI_AUTH_WPA3_ENT_192",         # Authenticate mode : WPA3_ENT_SUITE_B_192_BIT 
+        12: "WIFI_AUTH_DUMMY_1",              # Placeholder: Previously used by WIFI_AUTH_WPA3_EXT_PSK 
+        13: "WIFI_AUTH_DUMMY_2",              # Placeholder: Previously used by WIFI_AUTH_WPA3_EXT_PSK_MIXED_MODE 
+        14: "WIFI_AUTH_DPP",                  # Authenticate mode : DPP 
+        15: "WIFI_AUTH_WPA3_ENTERPRISE",      # Authenticate mode : WPA3-Enterprise Only Mode 
+        16: "WIFI_AUTH_WPA2_WPA3_ENTERPRISE", # Authenticate mode : WPA3-Enterprise Transition Mode 
+        17: "WIFI_AUTH_WPA_ENTERPRISE",       # Authenticate mode : WPA-Enterprise security 
+        18: "WIFI_AUTH_MAX",
+}
+
 parser = argparse.ArgumentParser(description="Process the colected APs data on FlipperZero and draws the the points on OpenStreetMap map\n\te.g. ./cliprog.py path/to/csv '39.635191,-0.239454' '39.635192,-0.239455'")
 
 parser.add_argument("csv_wifi_map", help="path to the csv WiFi-Map file from FlipperZero")
@@ -86,7 +111,7 @@ def save_geo_data_output_csv_file(geo_data):
     if not filename.endswith(".csv"):
         filename = filename + ".csv"
     with open(filename, "w", newline="") as csv_geo_data:
-        headers = ["ap_hash", "latitude", "longitude", "time", "val"]
+        headers = ["ap_hash","ap_auth_mode", "latitude", "longitude", "time", "val"]
         writer = csv.DictWriter(csv_geo_data, fieldnames=headers)
         writer.writeheader()
         writer.writerows(geo_data)
@@ -155,8 +180,10 @@ def main():
             walked_distance += interest_aps[i].tail(1).iloc[0, 1]
             time = interest_aps[i].tail(1).iloc[0, 3]
             ap_hash = interest_aps[i].tail(1).iloc[0, 0]
+            ap_auth_mode = interest_aps[i].tail(1).iloc[0, 2]
             dict_geo_data = {
                 "ap_hash": ap_hash,
+                "ap_auth_mode": WIFI_AUTH_MODE_TYPE[ap_auth_mode],
                 "latitude": float(coordinates[0]["x"]),
                 "longitude": float(coordinates[0]["y"]),
                 "time": int(time),
@@ -169,6 +196,7 @@ def main():
                 latest_row = interest_aps[i].tail(1)
                 time = latest_row.iloc[0, 3]
                 ap_hash = latest_row.iloc[0, 0]
+                ap_auth_mode = latest_row.iloc[0,2]
                 start_dst = row.iloc[0, 1]
                 end_dst = latest_row.iloc[0, 1]
                 delta_dst = abs(start_dst - end_dst)
@@ -182,6 +210,7 @@ def main():
                 )
                 dict_geo_data = {
                     "ap_hash": ap_hash,
+                    "ap_auth_mode": WIFI_AUTH_MODE_TYPE[ap_auth_mode],
                     "latitude": round(new_lat, 10),
                     "longitude": round(new_lon, 10),
                     "time": int(time),
@@ -201,7 +230,7 @@ def main():
         lat="latitude",
         lon="longitude",
         hover_name="ap_hash",
-        hover_data=["ap_hash", "time"],
+        hover_data=["ap_hash", "time", "ap_auth_mode"],
         zoom=17,
         height=850,
         width=850,
