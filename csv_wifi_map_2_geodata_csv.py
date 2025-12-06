@@ -13,7 +13,14 @@ import plotly.graph_objects as go
 import plotly.express as px
 from math import radians, cos, sin, asin, sqrt, pi
 
+# TODO: add this for cli
+# Drawing circles ?
+DRAW_CIRCLES = True 
+
+# VIC (Very Important Constants)
 RADIUS_EARTH = 6378.137 * 1000
+N = 360 # number of discrete sample points to be generated along the circle
+SEMI_C = 180
 
 
 def calculate_angle(coord):
@@ -34,16 +41,13 @@ def calculate_new_coordinates(coord, dist, alpha):
     dx = float(dist) * math.sin(alpha)
     dy = float(dist) * math.cos(alpha)
     # coord[0] is the latitude and longitude for starting point
-    new_lat = float(coord[0]["x"]) + (dy / RADIUS_EARTH) * (180 / math.pi)
+    new_lat = float(coord[0]["x"]) + (dy / RADIUS_EARTH) * (SEMI_C / math.pi)
     new_lon = float(coord[0]["y"]) + (
-        (dx / RADIUS_EARTH) * (180 / math.pi) / math.cos(coord[0]["x"] * math.pi / 180)
+        (dx / RADIUS_EARTH) * (SEMI_C / math.pi) / math.cos(coord[0]["x"] * math.pi / SEMI_C)
     )
     return (new_lat, new_lon)
 
 def generate_circle_points(lat, lon, radius, name):
-    # parameters
-    N = 360 # number of discrete sample points to be generated along the circle
-    
     # generate points
     circle_lats, circle_lons = [], []
     circle_names = []
@@ -52,8 +56,8 @@ def generate_circle_points(lat, lon, radius, name):
         angle = pi*2*k/N
         dx = radius*cos(angle)
         dy = radius*sin(angle)
-        circle_lats.append(lat + (180/pi)*(dy/6378137))
-        circle_lons.append(lon + (180/pi)*(dx/6378137)/cos(lat*pi/180))
+        circle_lats.append(lat + (SEMI_C/pi)*(dy/RADIUS_EARTH))
+        circle_lons.append(lon + (SEMI_C/pi)*(dx/RADIUS_EARTH)/cos(lat*pi/SEMI_C))
         circle_names.append(name)
     circle_lats.append(circle_lats[0])
     circle_lons.append(circle_lons[0])
@@ -70,6 +74,23 @@ def draw_circle(circle_lats, circle_lons, circle_names, fig):
             color="BlueViolet",
         ),
     ))
+
+# Drawing sorrunding APs
+def drawing_circles_aps(gdf, subsets, fig):
+    for i, ap_draw in gdf.iterrows():
+        # if i > 0:
+        for j, sub in enumerate(subsets):
+            row = sub.loc[(sub["AP hash"] == ap_draw["ap_hash"]) & (sub["Time from start (seconds)"] == ap_draw["time"])]
+            
+            # Draw circles for APs observed from this point 
+            if not row.empty:
+                for s, aps in sub.iterrows():
+                    hover_data = f"AP: {aps["AP hash"]}\n Dist: {aps["Distance (meters)"]} m"
+                    # we do not want to draw a circle for the current point
+                    if row.iat[0, 0] is not aps["AP hash"]:
+                        (circle_lats, circle_lons, circle_names) = generate_circle_points(ap_draw.latitude, ap_draw.longitude, aps["Distance (meters)"], hover_data)
+                        draw_circle(circle_lats, circle_lons, circle_names, fig)
+
 
 def main():
     if len(sys.argv) != 4:
@@ -179,26 +200,13 @@ def main():
         width=850,
     )
 
-    # Drawing sorrunding APs
-    for i, ap_draw in gdf.iterrows():
-        # if i > 0:
-        for j, sub in enumerate(subsets):
-            row = sub.loc[(sub["AP hash"] == ap_draw["ap_hash"]) & (sub["Time from start (seconds)"] == ap_draw["time"])]
-            
-            if not row.empty:
-                print("--- ROW ---")
-                print(row[["AP hash", "Time from start (seconds)"]])
-                print("-----------")
-                print(sub)
-                print("|=0=|")
-                for s, aps in sub.iterrows():
-                # APs that were on same time
-
-                    (circle_lats, circle_lons, circle_names) = generate_circle_points(ap_draw.latitude, ap_draw.longitude, aps["Distance (meters)"], aps["AP hash"])
-                    draw_circle(circle_lats, circle_lons, circle_names, fig)
-    
-    fig.update_layout(map_style="carto-darkmatter-nolabels")
-
+    if DRAW_CIRCLES:
+        drawing_circles_aps(gdf, subsets, fig)
+        
+    fig.update_layout(
+            map_style="carto-darkmatter-nolabels",
+            showlegend=False,
+    )
 
     fig.show()
     print("Process and drawing done, visit your default browser")
