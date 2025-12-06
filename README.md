@@ -54,7 +54,7 @@ Plot the geolocated warwalking colected data and sorounding APs:
 
 <div align="center">
     <p>
-        <img src="https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/.github/images/detail_wifi_map_aps_radius" alt="detail_wifi_map" >
+        <img src="https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/.github/images/detail_wifi_map_aps_radius.png" alt="detail_wifi_map" >
     </p>
 </div>
 
