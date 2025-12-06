@@ -111,7 +111,7 @@ def save_geo_data_output_csv_file(geo_data):
     if not filename.endswith(".csv"):
         filename = filename + ".csv"
     with open(filename, "w", newline="") as csv_geo_data:
-        headers = ["ap_hash","ap_auth_mode", "latitude", "longitude", "time", "val"]
+        headers = ["ap_hash","ap_auth_mode", "latitude", "longitude", "time"]
         writer = csv.DictWriter(csv_geo_data, fieldnames=headers)
         writer.writeheader()
         writer.writerows(geo_data)
@@ -187,7 +187,6 @@ def main():
                 "latitude": float(coordinates[0]["x"]),
                 "longitude": float(coordinates[0]["y"]),
                 "time": int(time),
-                "val": 100,
             }
             geo_data.append(dict_geo_data)
         else:
@@ -214,7 +213,6 @@ def main():
                     "latitude": round(new_lat, 10),
                     "longitude": round(new_lon, 10),
                     "time": int(time),
-                    "val": 100,
                 }
                 geo_data.append(dict_geo_data)
 
