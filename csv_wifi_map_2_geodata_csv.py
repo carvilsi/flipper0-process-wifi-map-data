@@ -119,14 +119,13 @@ def save_geo_data_output_csv_file(geo_data):
 # Drawing sorrunding APs
 def drawing_circles_aps(gdf, subsets, fig):
     for i, ap_draw in gdf.iterrows():
-        # if i > 0:
         for j, sub in enumerate(subsets):
             row = sub.loc[(sub["AP hash"] == ap_draw["ap_hash"]) & (sub["Time from start (seconds)"] == ap_draw["time"])]
             
             # Draw circles for APs observed from this point 
             if not row.empty:
                 for s, aps in sub.iterrows():
-                    hover_data = f"AP: {aps["AP hash"]}\n Dist: {aps["Distance (meters)"]} m\n From: {row.iat[0,0]}"
+                    hover_data = f"AP: {aps["AP hash"]} Dist: {aps["Distance (meters)"]} m Auht Mode: {WIFI_AUTH_MODE_TYPE[aps["AP auth mode"]]} From: {row.iat[0,0]}"
                     # we do not want to draw a circle for the current point
                     if row.iat[0, 0] is not aps["AP hash"]:
                         (circle_lats, circle_lons, circle_names) = generate_circle_points(ap_draw.latitude, ap_draw.longitude, aps["Distance (meters)"], hover_data)
