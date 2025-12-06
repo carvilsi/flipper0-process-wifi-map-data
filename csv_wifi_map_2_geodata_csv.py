@@ -2,8 +2,6 @@
 
 # This script generates a geospatial CSV data
 # and draws a map (openstreetmap)
-# Example of command:
-# python csv_wifi_map_2_geodata_csv.py local-data/wifi_map_6-10-2025_19_19_26_home_consum.csv '39.661423,-0.226952' '39.663005,-0.225719'
 
 import csv
 import sys
@@ -12,10 +10,16 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from math import cos, sin, pi
+import argparse
 
-# TODO: add this for cli
-# Drawing circles ?
-DRAW_CIRCLES = True 
+parser = argparse.ArgumentParser(description="Process the colected APs data on FlipperZero and draws the the points on OpenStreetMap map\n\te.g. ./cliprog.py path/to/csv '39.635191,-0.239454' '39.635192,-0.239455'")
+
+parser.add_argument("csv_wifi_map", help="path to the csv WiFi-Map file from FlipperZero")
+parser.add_argument("start_coordinates", help="The start cordinates point, 'latitude,longitde' you can get this on https://www.openstreetmap.org using 'Center Map here' and getting it from url; e.g. '39.635191,-0.239454'")
+parser.add_argument("end_coordinates", help="The end cordinates point, 'latitude,longitde' you can get this on https://www.openstreetmap.org using 'Center Map here' and getting it from url; e.g. '39.635191,-0.239454'")
+parser.add_argument("-dc", "--draw_circles", help="If set will draw circles with estimated distance to the AP", action="store_true")
+
+args = parser.parse_args()
 
 # VIC (Very Important Constants)
 RADIUS_EARTH = 6378.137 * 1000
@@ -30,9 +34,9 @@ def calculate_angle(coord):
 
 
 def get_coordinates():
-    origin_coords = sys.argv[2].split(",")
+    origin_coords = args.start_coordinates.split(",")
     origin_coord = {"x": float(origin_coords[0]), "y": float(origin_coords[1])}
-    end_coords = sys.argv[3].split(",")
+    end_coords = args.end_coordinates.split(",")
     end_coord = {"x": float(end_coords[0]), "y": float(end_coords[1])}
     return (origin_coord, end_coord)
 
@@ -94,11 +98,6 @@ def drawing_circles_aps(gdf, subsets, fig):
 
 
 def main():
-    if len(sys.argv) != 4:
-        raise Exception("""
-        You must provide a FlipperZero WiFi Map csv file and
-        start and end maps coordinates""")
-
     # get coordinates from command line argument
     coordinates = get_coordinates()
     # calculate the angle for direction
@@ -108,7 +107,7 @@ def main():
     geo_data = []
 
     # Process the data from WiFi Map CSV file from FlipperZero
-    df = pd.read_csv(sys.argv[1], sep=";")
+    df = pd.read_csv(args.csv_wifi_map, sep=";")
 
     times = df["Time from start (seconds)"].unique()
 
@@ -201,7 +200,7 @@ def main():
         width=850,
     )
 
-    if DRAW_CIRCLES:
+    if args.draw_circles:
         drawing_circles_aps(gdf, subsets, fig)
         
     fig.update_layout(
@@ -215,3 +214,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
