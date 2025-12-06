@@ -41,6 +41,9 @@ Plot the geolocated warwalking colected data:
 
 <div align="center">
     <p>
+        <img src="https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/.github/images/detail_points_wifi_map.png" alt="detail_points_wifi_map" >
+    </p>
+    <p>
         <img src="https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/.github/images/points_wifi_map.png" alt="points_wifi_map" >
     </p>
 </div>
