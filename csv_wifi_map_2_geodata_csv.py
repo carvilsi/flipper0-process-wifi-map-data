@@ -11,7 +11,7 @@ import math
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
-from math import radians, cos, sin, asin, sqrt, pi
+from math import cos, sin, pi
 
 # TODO: add this for cli
 # Drawing circles ?
@@ -85,6 +85,7 @@ def drawing_circles_aps(gdf, subsets, fig):
             # Draw circles for APs observed from this point 
             if not row.empty:
                 for s, aps in sub.iterrows():
+                    # TODO: add from which point was did the reading
                     hover_data = f"AP: {aps["AP hash"]}\n Dist: {aps["Distance (meters)"]} m"
                     # we do not want to draw a circle for the current point
                     if row.iat[0, 0] is not aps["AP hash"]:
