@@ -4,7 +4,6 @@
 # and draws a map (openstreetmap)
 
 import csv
-import sys
 import math
 import pandas as pd
 import plotly.graph_objects as go
@@ -218,17 +217,23 @@ def main():
     if args.output_geo_csv_file is not None:
         save_geo_data_output_csv_file(geo_data)
 
+    # create new dataFrame from the processed data
     gdf = pd.DataFrame.from_dict(geo_data)
 
     gdf.dropna(axis=0, how="any", subset=None, inplace=True)
 
+    # if we want to draw circles tune a bit the zoom
+    zoom = 17
+    if args.draw_circles:
+        zoom -= 0.5
+    
     fig = px.scatter_map(
         gdf,
         lat="latitude",
         lon="longitude",
         hover_name="ap_hash",
         hover_data=["ap_hash", "time", "ap_auth_mode"],
-        zoom=17,
+        zoom=zoom,
         height=850,
         width=850,
     )
@@ -240,6 +245,7 @@ def main():
             map_style="carto-darkmatter-nolabels",
             showlegend=False,
     )
+    
 
     fig.show()
     print("Process and drawing done, visit your default browser")
