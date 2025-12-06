@@ -18,6 +18,7 @@ parser.add_argument("csv_wifi_map", help="path to the csv WiFi-Map file from Fli
 parser.add_argument("start_coordinates", help="The start cordinates point, 'latitude,longitde' you can get this on https://www.openstreetmap.org using 'Center Map here' and getting it from url; e.g. '39.635191,-0.239454'")
 parser.add_argument("end_coordinates", help="The end cordinates point, 'latitude,longitde' you can get this on https://www.openstreetmap.org using 'Center Map here' and getting it from url; e.g. '39.635191,-0.239454'")
 parser.add_argument("-dc", "--draw_circles", help="If set will draw circles with estimated distance to the AP", action="store_true")
+parser.add_argument("-o", "--output_geo_csv_file", help="Saves the processed data on CSV file")
 
 args = parser.parse_args()
 
@@ -78,6 +79,17 @@ def draw_circle(circle_lats, circle_lons, circle_names, fig):
             color="BlueViolet",
         ),
     ))
+
+# save the file with geo data
+def save_geo_data_output_csv_file(geo_data):
+    filename = args.output_geo_csv_file
+    if not filename.endswith(".csv"):
+        filename = filename + ".csv"
+    with open(filename, "w", newline="") as csv_geo_data:
+        headers = ["ap_hash", "latitude", "longitude", "time", "val"]
+        writer = csv.DictWriter(csv_geo_data, fieldnames=headers)
+        writer.writeheader()
+        writer.writerows(geo_data)
 
 # Drawing sorrunding APs
 def drawing_circles_aps(gdf, subsets, fig):
@@ -178,14 +190,10 @@ def main():
                 }
                 geo_data.append(dict_geo_data)
 
-    # lets save the data on a csv for later drawing
-    with open("geo_data.csv", "w", newline="") as csv_geo_data:
-        headers = ["ap_hash", "latitude", "longitude", "time", "val"]
-        writer = csv.DictWriter(csv_geo_data, fieldnames=headers)
-        writer.writeheader()
-        writer.writerows(geo_data)
+    if args.output_geo_csv_file is not None:
+        save_geo_data_output_csv_file(geo_data)
 
-    gdf = pd.read_csv("geo_data.csv")
+    gdf = pd.DataFrame.from_dict(geo_data)
 
     gdf.dropna(axis=0, how="any", subset=None, inplace=True)
 

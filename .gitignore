@@ -2,3 +2,4 @@ local-data/
 .ipynb_checkpoints/
 geo_data.csv
 tags
+*.csv
