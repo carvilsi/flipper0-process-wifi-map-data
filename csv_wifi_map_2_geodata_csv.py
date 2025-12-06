@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser(description="Process the colected APs data on F
 
 parser.add_argument("csv_wifi_map", help="path to the csv WiFi-Map file from FlipperZero")
 parser.add_argument("start_coordinates", help="The start cordinates point, 'latitude,longitde' you can get this on https://www.openstreetmap.org using 'Center Map here' and getting it from url; e.g. '39.635191,-0.239454'")
-parser.add_argument("end_coordinates", help="The end cordinates point, 'latitude,longitde' you can get this on https://www.openstreetmap.org using 'Center Map here' and getting it from url; e.g. '39.635191,-0.239454'")
+parser.add_argument("end_coordinates", help="The end cordinates point, 'latitude,longitde' you can get this on https://www.openstreetmap.org using 'Center Map here' and getting it from url; e.g. '39.635192,-0.239455'")
 parser.add_argument("-dc", "--draw_circles", help="If set will draw circles with estimated distance to the AP", action="store_true")
 parser.add_argument("-o", "--output_geo_csv_file", help="Saves the processed data on CSV file")
 
@@ -101,8 +101,7 @@ def drawing_circles_aps(gdf, subsets, fig):
             # Draw circles for APs observed from this point 
             if not row.empty:
                 for s, aps in sub.iterrows():
-                    # TODO: add from which point was did the reading
-                    hover_data = f"AP: {aps["AP hash"]}\n Dist: {aps["Distance (meters)"]} m"
+                    hover_data = f"AP: {aps["AP hash"]}\n Dist: {aps["Distance (meters)"]} m\n From: {row.iat[0,0]}"
                     # we do not want to draw a circle for the current point
                     if row.iat[0, 0] is not aps["AP hash"]:
                         (circle_lats, circle_lons, circle_names) = generate_circle_points(ap_draw.latitude, ap_draw.longitude, aps["Distance (meters)"], hover_data)
