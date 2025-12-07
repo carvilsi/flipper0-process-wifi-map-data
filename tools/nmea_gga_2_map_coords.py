@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+
 # this script converts from NMEA GGA GPS output to
 # map coordinates, the expected input is:
-# GPGGA,095548.00,3939.67311,N,00013.63974,W,1,05,2.73,5.9,M,50.4,M,,*4A
-import sys
+# GPGGA,095545.00,3935.67311,N,00012.63974,W,1,05,2.73,5.9,M,50.4,M,,*4A
 
+import sys
 
 def convert_latitude(loc_arr):
     gga_lat_arr = loc_arr[2].split(".")
@@ -21,12 +23,9 @@ def convert_longitude(loc_arr):
     lon = ((float(lon_d) / 60) + int(lon_ll)) * int(e_w)
     return lon
 
-
-# MAIN #
-
 if len(sys.argv) == 1:
     raise Exception(
-        "You must provide a GGA NEMA GPS, e.g: GPGGA,095548.00,3939.67311,N,00013.63974,W,1,05,2.73,5.9,M,50.4,M,,*4A"
+        "You must provide a GGA NEMA GPS, e.g: GPGGA,095545.00,3935.67311,N,00012.63974,W,1,05,2.73,5.9,M,50.4,M,,*4A"
     )
 
 loc_arr = sys.argv[1].split(",")

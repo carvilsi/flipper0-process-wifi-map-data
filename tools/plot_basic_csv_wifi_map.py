@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # This script just draws the APs distance Vs time
 
 import csv

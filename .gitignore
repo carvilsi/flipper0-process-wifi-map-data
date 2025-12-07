@@ -3,3 +3,4 @@ local-data/
 geo_data.csv
 tags
 *.csv
+venv/

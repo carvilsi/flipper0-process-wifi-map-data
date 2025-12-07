@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+
+# this is script splits de csv file with collected data
+# from FlipperZero on several files.
+
+# Only for legacy WiFi-Map CSVs files
+
 import sys
 import os
 
