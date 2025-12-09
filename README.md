@@ -76,8 +76,6 @@ Small notebooks to play around with collected data.
 
 ### Analyze
 
-To retrieve some data from the [warwalking](). 
-
 - [notebook](https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/jupyter-notebooks/WiFi_Map_analyze.ipynb)
 
 ### Process
