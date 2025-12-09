@@ -1,6 +1,5 @@
 # flipper0-process-wifi-map-data
 
-
 <div align="center">
     <p>Scripts to process FlipperZero WiFi Map data to geolocate APs from wardriving sessions</p>
     <p>
@@ -8,6 +7,9 @@
     </p>
 </div>
 
+---
+
+In order to get the data you'll need the app [FlipperZero WiFi-Map](https://github.com/carvilsi/flipper0-wifi-map) and it's [ESP32 companion](https://github.com/carvilsi/esp32-wifi-map)
 
 ## Run
 
@@ -67,6 +69,22 @@ Plot the geolocated warwalking colected data and sorounding APs:
 Plot and save processed data to CSV file:
 
 `$ ./csv_wifi_map_2_geodata_csv.py path/to/csv --draw_circles '39.635191,-0.239454' '39.635192,-0.239455' -o outpu_processed.csv`
+
+## Jupiter Notebooks
+
+Small notebooks to play around with collected data.
+
+### Analyze
+
+To retrieve some data from the [warwalking](). 
+
+- [notebook](https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/jupyter-notebooks/WiFi_Map_analyze.ipynb)
+
+### Process
+
+To try things related with processing the collected data from warwalking
+
+- [notebook](https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/jupyter-notebooks/WiFi_maps_process.ipynb)
 
 ## Caveats
 
