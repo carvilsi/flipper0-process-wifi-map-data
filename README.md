@@ -28,6 +28,10 @@ To deal with dependencies it's recomended to do this on virtual environment:
 
 Retrieve the colected data from you FlipperZero with your favoiurite method and get the start and end coordenates from [OpenStreetMap](https://www.openstreetmap.org), to achive that, use secondary mouse button over the point and use "Center map here" then use the coorditates from url bar, e.g. https://www.openstreetmap.org/#map=19/39.635191/-0.239454&layers=N as '39.635191.-0.239454'
 
+Run it with:
+
+`$ ./csv_wifi_map_2_geodata_csv.py path/to/csv '39.635191,-0.239454' '39.635192,-0.239455'`
+
 
 ```
 usage: csv_wifi_map_2_geodata_csv.py [-h] [-dc] [-o OUTPUT_GEO_CSV_FILE] csv_wifi_map start_coordinates end_coordinates
