@@ -13,6 +13,21 @@ In order to get the data you'll need the app [FlipperZero WiFi-Map](https://gith
 
 ## Run
 
+Clone the repo:
+
+`$ git clone https://github.com/carvilsi/flipper0-process-wifi-map-data.git`
+
+`$ cd flipper0-process-wifi-map-data`
+
+To deal with dependencies it's recomended to do this on virtual environment:
+
+`$ python3 -m venv your_env_name`
+
+`$ pip install -r requirements.txt`
+
+
+Retrieve the colected data from you FlipperZero with your favoiurite method and get the start and end coordenates from [OpenStreetMap](https://www.openstreetmap.org), to achive that, use secondary mouse button over the point and use "Center map here" then use the coorditates from url bar, e.g. https://www.openstreetmap.org/#map=19/39.635191/-0.239454&layers=N as '39.635191.-0.239454'
+
 
 ```
 usage: csv_wifi_map_2_geodata_csv.py [-h] [-dc] [-o OUTPUT_GEO_CSV_FILE] csv_wifi_map start_coordinates end_coordinates
