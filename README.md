@@ -89,6 +89,14 @@ Plot and save processed data to CSV file:
 
 `$ ./csv_wifi_map_2_geodata_csv.py path/to/csv --draw_circles '39.635191,-0.239454' '39.635192,-0.239455' -o outpu_processed.csv`
 
+## Tools
+
+- [nmea_gga_2_map_coords.py](https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/tools/nmea_gga_2_map_coords.py) This script converts from NMEA GGA GPS output to map coordinates, the expected input is:  GPGGA,095545.00,3935.67311,N,00012.63974,W,1,05,2.73,5.9,M,50.4,M,,*4A
+
+- [plot_basic_csv_wifi_map.py](https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/tools/plot_basic_csv_wifi_map.py) This script just draws the APs distance Vs time
+
+- [splipt_raw_wifi_map_data.py](https://github.com/carvilsi/flipper0-process-wifi-map-data/blob/main/tools/splipt_raw_wifi_map_data.py) This is script splits de csv file with collected data from FlipperZero on several files. Only for legacy WiFi-Map CSVs files; the current version on FlipperZero WiFi-Map does not require this conversion
+
 ## Jupiter Notebooks
 
 Small notebooks to play around with collected data.
